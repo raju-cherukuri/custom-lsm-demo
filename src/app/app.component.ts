@@ -26,11 +26,15 @@ import {LocalStorageManagerService} from "@local-storage-manager";
               </div>
               <div>
                 <button class="btn btn-primary">
-                  <span class="spinner-border spinner-border-sm me-1"></span>
+                  <span class=" me-1"></span>
                   Login
                 </button>
               </div>
             </form>
+            <button class="btn btn-danger" (click)="deleteItem()">
+              <span class="me-1"></span>
+              Delete User
+            </button>
           </div>
         </div>
       </div>
@@ -57,7 +61,7 @@ export class AppComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
-    this.user = this.storageService.getUser();
+    this.getUser();
     if(this.user.username === undefined){
       this.toastr.warning("It seems local storage data has changed or is deleted")
     }
@@ -65,12 +69,20 @@ export class AppComponent implements OnInit {
 
   get f() { return this.form.controls; }
 
+  getUser(){
+    this.user = this.storageService.getItem('user2', 'sessionStorage');
+  }
   onSubmit() {
     let credentials = {username: this.f["username"].value}
     console.log(credentials)
-    this.storageService.saveUser(credentials);
+    this.storageService.saveItem(credentials, 'user2', 'sessionStorage');
     this.toastr.success("Record Saved successfully")
-    this.user = this.storageService.getUser();
+    this.getUser();
+  }
+
+  deleteItem() {
+    this.storageService.deleteAll('sessionStorage');
+    this.getUser();
   }
 
   showSuccess(message?: string) {
